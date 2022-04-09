@@ -7,28 +7,28 @@ public class BuildingAltitudePicking : MonoBehaviour
 {
     [SerializeField]
     private GameObject boxPrefab = null;
-
+    private float x, y;
+    public int numberOfEnemies;
     private LatLong cameraLocation = LatLong.FromDegrees(37.795641, -122.404173);
-    private LatLong boxLocation1 = LatLong.FromDegrees(37.795159, -122.404336);
-    private LatLong boxLocation2 = LatLong.FromDegrees(37.795173, -122.404229);
+    private LatLong enemylocation;
 
 
     private void OnEnable()
     {
-        StartCoroutine(Example());
+        StartCoroutine(PlaceEnemies());
     }
-
-    IEnumerator Example()
+    IEnumerator PlaceEnemies()
     {
         Api.Instance.CameraApi.MoveTo(cameraLocation, distanceFromInterest: 400, headingDegrees: 0, tiltDegrees: 45);
-
-        while (true)
+        yield return new WaitForSeconds(4.0f);
+        for (int i=0;i <= numberOfEnemies;i++)
         {
-            yield return new WaitForSeconds(4.0f);
-
-            MakeBox(boxLocation1);
-            MakeBox(boxLocation2);
+            x =Random.Range(37.78f, 37.80f);
+            y =Random.Range(-122.40f, -122.41f);
+            enemylocation = LatLong.FromDegrees(x, y);
+            MakeBox(enemylocation);
         }
+        
     }
 
     void MakeBox(LatLong latLong)
@@ -43,7 +43,6 @@ public class BuildingAltitudePicking : MonoBehaviour
 
             var box = boxAnchor.transform.GetChild(0);
             box.localPosition = Vector3.up * (float)buildingIntersectionPoint.GetAltitude();
-            Destroy(boxAnchor, 2.0f);
         }
     }
 

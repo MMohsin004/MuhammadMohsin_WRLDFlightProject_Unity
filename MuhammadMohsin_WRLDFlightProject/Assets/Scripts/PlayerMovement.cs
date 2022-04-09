@@ -23,24 +23,27 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
-        x = Input.GetAxisRaw("Horizontal");
-        y = Input.GetAxisRaw("Vertical");
+        
         if (GameManager.instance.engineRunning)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            x = Input.GetAxisRaw("Horizontal");
+            y = Input.GetAxisRaw("Vertical");
+            
+            //Ascend control
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 rb.AddForce(Time.fixedDeltaTime * upForceMultiplier * transform.up, ForceMode.VelocityChange);
             }
-            if (Input.GetKeyUp(KeyCode.Space))
+            //Descend control
+            if (Input.GetKeyDown(KeyCode.X))
             {
-                rb.velocity = Vector3.Lerp(rb.velocity,Vector3.zero,3f);
+                rb.AddForce(Time.fixedDeltaTime * upForceMultiplier * -transform.up, ForceMode.VelocityChange);
             }
-            rb.AddForce(Time.fixedDeltaTime * turnForceMultiplier * transform.right * x, ForceMode.VelocityChange);
-            rb.AddForce(Time.fixedDeltaTime * forwardForceMultiplier * transform.forward * y, ForceMode.VelocityChange);
-            if(x != 0)
-            {
-                Quaternion.Lerp(rb.rotation, Quaternion.Euler(Vector3.forward * turnFactor * -x),1f);
-            }
+
+            rb.AddForce(Time.fixedDeltaTime * turnForceMultiplier * x * transform.right, ForceMode.VelocityChange);
+            rb.AddTorque(Time.fixedDeltaTime * turnFactor * x * transform.up,ForceMode.VelocityChange);
+            rb.AddForce(forwardForceMultiplier * Time.fixedDeltaTime * y * transform.forward, ForceMode.VelocityChange);
+            
         }
     }
 }

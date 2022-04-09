@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Wrld;
 using Wrld.Common.Maths;
@@ -8,6 +9,8 @@ using Wrld.Transport;
 public class FindPointOnTransportNetwork : MonoBehaviour
 {
     private readonly LatLongAltitude m_inputCoords = LatLongAltitude.FromDegrees(37.784468, -122.401268, 10.0);
+    private float x, y;
+    private LatLongAltitude m_inputCoords_Enemy;
     private float m_inputHeadingDegreesA = 225.0f;
     private float m_inputHeadingDegreesB = 300.0f;
     private bool m_isHeadingA;
@@ -16,12 +19,34 @@ public class FindPointOnTransportNetwork : MonoBehaviour
     GameObject m_sphereOutput;
     GameObject m_directionIndicatorInput;
     GameObject m_directionIndicatorOutput;
+    public int numberOfEnemies;
+    private int i;
+    private List<GameObject> EnemyObject;
+    public GameObject enemy;
 
     private void OnEnable()
     {
-        CreateVisualizationObjects();
+        EnemyObject = new List<GameObject>();
+        for (i=0;i<numberOfEnemies;i++)
+        {
+            x = Random.Range(37.78f, 37.80f);
+            y = Random.Range(-122.40f, -122.41f);
+            m_inputCoords_Enemy = LatLongAltitude.FromDegrees(x, y, 10.0f);
+            PlaceEnemyOnPath();
+            var options = new TransportPositionerOptionsBuilder()
+            .SetInputCoordinates(m_inputCoords.GetLatitude(), m_inputCoords.GetLongitude())
+            .SetInputHeading(GetCurrentInputHeading())
+            .Build();
 
-        var options = new TransportPositionerOptionsBuilder()
+            m_transportPositioner = Api.Instance.TransportApi.CreatePositioner(options);
+            m_transportPositioner.OnPointOnGraphChanged += OnPointOnGraphChanged;
+
+            StartCoroutine(ToggleInputHeading());
+        }
+        //CreateVisualizationObjects();
+        
+
+        /*var options = new TransportPositionerOptionsBuilder()
             .SetInputCoordinates(m_inputCoords.GetLatitude(), m_inputCoords.GetLongitude())
             .SetInputHeading(GetCurrentInputHeading())
             .Build();
@@ -29,13 +54,13 @@ public class FindPointOnTransportNetwork : MonoBehaviour
         m_transportPositioner = Api.Instance.TransportApi.CreatePositioner(options);
         m_transportPositioner.OnPointOnGraphChanged += OnPointOnGraphChanged;
 
-        StartCoroutine(ToggleInputHeading());
+        StartCoroutine(ToggleInputHeading());*/
     }
 
     private void OnDisable()
     {
         GameObject.Destroy(m_sphereInput);
-        GameObject.Destroy(m_sphereOutput);
+        GameObject.Destroy(EnemyObject[i]);
         GameObject.Destroy(m_directionIndicatorInput);
         GameObject.Destroy(m_directionIndicatorOutput);
 
@@ -52,7 +77,7 @@ public class FindPointOnTransportNetwork : MonoBehaviour
 
             m_transportPositioner.SetInputHeading(GetCurrentInputHeading());
             yield return new WaitForSeconds(5);
-        }        
+        }
     }
 
     private float GetCurrentInputHeading()
@@ -71,15 +96,22 @@ public class FindPointOnTransportNetwork : MonoBehaviour
             outputLLA.SetAltitude(outputLLA.GetAltitude() + verticalOffset);
             var outputPosition = Api.Instance.SpacesApi.GeographicToWorldPoint(outputLLA);
 
-            m_sphereOutput.transform.position = outputPosition;
+            EnemyObject[i].transform.position = outputPosition;
             m_directionIndicatorOutput.transform.localPosition = outputPosition;
             m_directionIndicatorOutput.transform.eulerAngles = new Vector3(0.0f, (float)pointOnGraph.HeadingOnWayDegrees, 0.0f);
 
-            m_sphereOutput.SetActive(true);
+            EnemyObject[i].SetActive(true);
             m_directionIndicatorOutput.SetActive(true);
         }
     }
-
+    private void PlaceEnemyOnPath()
+    {
+        var inputPosition = Api.Instance.SpacesApi.GeographicToWorldPoint(m_inputCoords_Enemy);
+        EnemyObject.Add(PlaceEnemy());
+        EnemyObject[i].transform.localPosition = inputPosition;
+        m_directionIndicatorInput = CreateDirectionIndicator(Color.red, 5.0f);
+        m_directionIndicatorInput.transform.localPosition = inputPosition;
+    }
     private void CreateVisualizationObjects()
     {
         var inputPosition = Api.Instance.SpacesApi.GeographicToWorldPoint(m_inputCoords);
@@ -97,7 +129,12 @@ public class FindPointOnTransportNetwork : MonoBehaviour
         m_sphereOutput.SetActive(false);
         m_directionIndicatorOutput.SetActive(false);
     }
-
+    private GameObject PlaceEnemy()
+    {
+        var enemy = Instantiate(this.enemy);
+        enemy.transform.parent = this.transform;
+        return enemy;
+    }
 
     private GameObject CreateSphere(Color color, float radius)
     {
@@ -130,9 +167,8 @@ public class FindPointOnTransportNetwork : MonoBehaviour
         lineRenderer.numPositions = 2;
 #endif
 
-        lineRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.forward* length });
+        lineRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.forward * length });
 
         return gameObject;
     }
 }
-
