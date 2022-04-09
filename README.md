@@ -32,3 +32,5 @@ enemies.
 3. Use an object pool to avoid instantiating and destroying 3D objects.
 
 Work on bonus objectives has not been started yet.
+ ### Design Pattern used
+ Singleton design pattern is used in this project. Only one instance of a class is present in the scene. Since this is just a prototype and only contains one scene there is no risk of a class being instantiated twice either.
