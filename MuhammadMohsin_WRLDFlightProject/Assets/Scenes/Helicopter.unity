@@ -1175,7 +1175,7 @@ MonoBehaviour:
   m_materialDirectory: WrldMaterials/
   m_indoorMapMaterialDirectory: WrldMaterials/Archetypes
   m_overrideLandmarkMaterial: {fileID: 0}
-  m_useBuiltInCameraControls: 1
+  m_useBuiltInCameraControls: 0
   m_terrainCollisions: 1
   m_roadCollisions: 1
   m_buildingCollisions: 1
@@ -1204,7 +1204,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1564509431}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66df8f56efc6bf7438087dd06b65b582, type: 3}
   m_Name: 
@@ -1218,13 +1218,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1564509431}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99fff97d7cf9e9c44af7bab879872087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemies: {fileID: 1840588697934436, guid: de55e49fdd3b28c4093f77f4d4c0c0a0, type: 3}
-  numberOfEnemies: 1
+  numberOfEnemies: 20
+  enemy: {fileID: 1840588697934436, guid: de55e49fdd3b28c4093f77f4d4c0c0a0, type: 3}
 --- !u!1 &1642733715
 GameObject:
   m_ObjectHideFlags: 0
@@ -1288,7 +1288,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1744760475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2026,7 +2026,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!54 &5244367514493772095
 Rigidbody:
   m_ObjectHideFlags: 0
